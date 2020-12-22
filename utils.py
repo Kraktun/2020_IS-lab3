@@ -7,9 +7,6 @@ def bin_to_int(b):
 def int_to_bin(i):
     return string_to_array(str(bin(i))[2:])
 
-def logic_to_int(t):
-    return map(lambda x: 0 if False else 1, t)
-
 def sum_digits(n):
     s = 0
     while n: # > 0

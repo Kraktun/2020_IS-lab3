@@ -19,17 +19,7 @@ class Verifier:
 def build_response(key, c, n):
     c_dec = bin_to_int(c)
     sc = sum_digits(c_dec)
-    n_bin = int_to_bin(n)
-    t_key = key
-    # padding?
-    if len(t_key) < len(n_bin):
-        pad = len(n_bin) - len(t_key)
-        t_key = np.pad(t_key, (pad, 0), 'constant', constant_values=(0))
-    elif len(t_key) > len(n_bin):
-        pad = len(t_key) - len(n_bin)
-        n_bin = np.pad(n_bin, (pad, 0), 'constant', constant_values=(0))
-    t = np.logical_xor(t_key, n_bin)
-    t = logic_to_int(t)
-    st = sum_digits(bin_to_int(t))
+    t = key + n
+    st = sum_digits(t)
     s = sc*st
     return int_to_bin(s)

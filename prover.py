@@ -1,6 +1,7 @@
 import numpy as np
 from verifier import *
 from utils import *
+import random
 
 class Prover:
 
@@ -9,7 +10,7 @@ class Prover:
         self.verifier = Verifier(counter_v)
 
     def compute_key(self, lk, isAttacker=False):
-        key = np.random.choice(2, lk, p=[0.5, 0.5])
+        key = random.randrange(0, pow(2, lk))
         self.verifier.shared_key = key
         if not isAttacker:
             self.shared_key = key
