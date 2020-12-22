@@ -19,6 +19,8 @@ class Verifier:
 def build_response(key, c, n):
     c_dec = bin_to_int(c)
     sc = sum_digits(c_dec)
+    # if key is an array of bits
+    # t = bin_to_int(key) + n
     t = key + n
     st = sum_digits(t)
     s = sc*st

@@ -6,6 +6,8 @@ def main():
     lk = 10
     p = Prover(counter_v=0)
     p.compute_key(lk=lk, isAttacker=False)
+    # if shared_key is an array of bits 
+    # print("shared key: " + array_to_string(p.shared_key))
     print("shared key: " + array_to_string(int_to_bin(p.shared_key))) # you can print directly the number if you prefer
     for i in range(10):
         c, n = p.send_welcome(lc=lc)

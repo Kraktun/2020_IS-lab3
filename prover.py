@@ -11,6 +11,8 @@ class Prover:
 
     def compute_key(self, lk, isAttacker=False):
         key = random.randrange(0, pow(2, lk))
+        # if we must save it as an array of bits
+        # key = np.random.choice(2, lk, p=[0.5, 0.5])
         self.verifier.shared_key = key
         if not isAttacker:
             self.shared_key = key
