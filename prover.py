@@ -1,7 +1,6 @@
 import numpy as np
 from verifier import *
 from utils import *
-import random
 
 class Prover:
 
@@ -10,9 +9,7 @@ class Prover:
         self.verifier = Verifier(counter_v)
 
     def compute_key(self, lk, isAttacker=False):
-        key = random.randrange(0, pow(2, lk))
-        # if we must save it as an array of bits
-        # key = np.random.choice(2, lk, p=[0.5, 0.5])
+        key = np.random.choice(2, lk, p=[0.5, 0.5])
         self.verifier.shared_key = key
         if not isAttacker:
             self.shared_key = key
@@ -23,6 +20,18 @@ class Prover:
         self.c, self.n = self.verifier.get_challenge(lc)
         return self.c, self.n
 
-    def send_encrypted(self):
+    def compute_u3(self):
         r = build_response(self.shared_key, self.c, self.n)
-        return self.verifier.verify_encryption(r)
+        return self.verifier.verify_u3(r), r
+        
+    def attack_observed_round(self, prev_c, prev_r, current_c, lc):
+    	prev_sc = sum_digits(bin_to_int(prev_c))
+    	if (prev_sc != 0):
+    		prev_st = bin_to_int(prev_r)//prev_sc
+    		sc = sum_digits(bin_to_int(current_c))
+    		st = prev_st - 2 
+    		#st = prev_st + 7
+    		r = int_to_bin(sc*st)
+    	else: r = int_to_bin(0)
+    	return r
+
