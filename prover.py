@@ -22,22 +22,22 @@ class Prover:
         return self.c, self.n
 
     def compute_u3(self):
-        if self.shared_key == -1:
+        if type(self.shared_key) is int and self.shared_key == -1:
             r = build_stat_response(self.lk, self.c, self.n)
         else:
             r = build_response(self.shared_key, self.c, self.n)
         return self.verifier.verify_u3(r), r
         
     def attack_observed_round(self, prev_c, prev_r, current_c, lc):
-    	prev_sc = sum_digits(bin_to_int(prev_c))
-    	if (prev_sc != 0):
-    		prev_st = bin_to_int(prev_r)//prev_sc
-    		sc = sum_digits(bin_to_int(current_c))
-    		st = prev_st - 2 
-    		#st = prev_st + 7
-    		r = int_to_bin(sc*st)
-    	else: r = int_to_bin(0)
-    	return r
+        prev_sc = sum_digits(bin_to_int(prev_c))
+        if (prev_sc != 0):
+            prev_st = bin_to_int(prev_r)//prev_sc
+            sc = sum_digits(bin_to_int(current_c))
+            st = prev_st - 2 
+            #st = prev_st + 7
+            r = int_to_bin(sc*st)
+        else: r = int_to_bin(0)
+        return r
 
 def build_stat_response(lk, c, n):
     # replace with non-brute approach
