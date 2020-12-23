@@ -83,7 +83,7 @@ def attack_as_observer():
     plt.show(block = False)
 
 def attack_brute():
-    # ATTACK WITH OBSERVED PREVIOUS ROUND
+    # ATTACK WITHOUT OBSERVING PREVIOUS ROUNDS
     fig = plt.figure()
     avg_holder = []
     for lc in tqdm(lc_values):
@@ -96,9 +96,9 @@ def attack_brute():
             for i in range(repetitions):
                 # simulate a random round
                 counter = random.randint(0, 200)
-                start = time.time()
                 p = Prover(counter_v=counter)
                 p.compute_key(lk=lk, isAttacker=True)
+                start = time.time()
                 c, n = p.send_welcome(lc=lc) # generate challenge and n
                 result = p.compute_u3()
                 end = time.time()
