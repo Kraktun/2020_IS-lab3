@@ -22,10 +22,10 @@ class Prover:
         return self.c, self.n
 
     def compute_u3(self):
-        key = self.shared_key
         if self.shared_key == -1:
-            key = np.random.choice(2, self.lk, p=[0.5, 0.5])
-        r = build_response(key, self.c, self.n)
+            r = build_stat_response(self.lk, self.c, self.n)
+        else:
+            r = build_response(self.shared_key, self.c, self.n)
         return self.verifier.verify_u3(r), r
         
     def attack_observed_round(self, prev_c, prev_r, current_c, lc):
@@ -39,3 +39,8 @@ class Prover:
     	else: r = int_to_bin(0)
     	return r
 
+def build_stat_response(lk, c, n):
+    # replace with non-brute approach
+    key = np.random.choice(2, lk, p=[0.5, 0.5])
+    r = build_response(key, c, n)
+    return r
