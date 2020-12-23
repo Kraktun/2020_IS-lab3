@@ -11,6 +11,7 @@ class Prover:
     def compute_key(self, lk, isAttacker=False):
         key = np.random.choice(2, lk, p=[0.5, 0.5])
         self.verifier.shared_key = key
+        self.lk = lk
         if not isAttacker:
             self.shared_key = key
         return self.shared_key
@@ -21,7 +22,10 @@ class Prover:
         return self.c, self.n
 
     def compute_u3(self):
-        r = build_response(self.shared_key, self.c, self.n)
+        key = self.shared_key
+        if self.shared_key == -1:
+            key = np.random.choice(2, self.lk, p=[0.5, 0.5])
+        r = build_response(key, self.c, self.n)
         return self.verifier.verify_u3(r), r
         
     def attack_observed_round(self, prev_c, prev_r, current_c, lc):
