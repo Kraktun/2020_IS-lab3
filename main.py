@@ -1,26 +1,27 @@
 from prover import *
 from utils import *
-from timeit import default_timer as timer
+import time
 import random
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
+lc_values = [4, 8, 16, 20, 24, 28, 30, 32, 64, 128]
+lk_values = [4, 8, 16, 20, 24, 28, 30, 32, 64, 128]
+
 def alg_complexity():
 	
-    lc_values = [4, 8, 16, 20, 24, 28, 30, 32, 64, 128]
-    lk_values = [4, 8, 16, 20, 24, 28, 30, 32, 64, 128]
     fig = plt.figure()
     for lc in tqdm(lc_values):
         avg_time = []
         for lk in lk_values:
             p = Prover(counter_v=0)
             p.compute_key(lk=lk, isAttacker=False)
-            repetitions = 10**4
-            start = timer()
+            repetitions = 10**3
+            start = time.time()
             for i in range(repetitions):
                 c, n = p.send_welcome(lc=lc) # generate challenge and n
                 p.compute_u3() # compute r, r1 from c and n and verify that r = r1
-            end = timer()
+            end = time.time()
             avg = (end-start)/repetitions
             avg_time.append(avg)
         plt.plot(lc_values, avg_time)
