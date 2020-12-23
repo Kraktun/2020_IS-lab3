@@ -31,74 +31,56 @@ def alg_complexity():
     plt.ylabel('average elapsed time')
     plt.show(block = False)
 	
-def attack_observer():
-	# ATTACK WITH OBSERVED PREVIOUS ROUND
-	lc_values = [4, 8, 16, 20, 24, 28, 30, 32, 64, 128]
-	lk_values = [4, 8, 16, 20, 24, 28, 30, 32, 64, 128]
-	for c in lc_values:
-		lc = c
-		success_rate = []
-		for k in tqdm(lk_values):
-			lk = k
-			success = 0
-			for i in range(10**3):
-				# simulate the observed round
-				counter = random.randint(0, 200)
-				p = Prover(counter_v=counter)
-				p.compute_key(lk=lk, isAttacker=False)
-				prev_c, prev_n = p.send_welcome(lc=lc)
-				result, prev_r = p.compute_u3()
+def attack_as_observer():
+    # ATTACK WITH OBSERVED PREVIOUS ROUND
+    fig = plt.figure()
+    avg_holder = []
+    for lc in tqdm(lc_values):
+        success_rate = []
+        avg_time = []
+        for lk in lk_values:
+            success = 0
+            repetitions = 10**3
+            start = time.time()
+            for i in range(repetitions):
+                # simulate the observed round
+                counter = random.randint(0, 200)
+                p = Prover(counter_v=counter)
+                p.compute_key(lk=lk, isAttacker=False)
+                prev_c, prev_n = p.send_welcome(lc=lc)
+                result, prev_r = p.compute_u3()
 				
-				# simulate current round
-				for i in range(0, 24):
-					p.verifier.get_challenge(lc)
+                # simulate current round
+                for i in range(0, 24):
+                    c, n = p.verifier.get_challenge(lc)
 					
-				c, n = p.send_welcome(lc=lc)
-				r = p.attack_observed_round(prev_c, prev_r, c, lc)
-				result, true_r = p.verifier.verify_u3(r)
-				if (result):
-					success += 1
-			success_rate.append(success/10**3)
-		plt.plot(lk_values, success_rate)
-	plt.xlabel('key length')
-	plt.ylabel('success rate')
-	plt.legend(lc_values)
-	plt.show()
-	
-def attack_brute():
-	# ATTACK WITH OBSERVED PREVIOUS ROUND
-	lc_values = [4, 8, 16, 20, 24, 28, 30, 32, 64, 128]
-	lk_values = [4, 8, 16, 20, 24, 28, 30, 32, 64, 128]
-	for c in lc_values:
-		lc = c
-		avg_time = []
-		for k in tqdm(lk_values):
-			lk = k
-			avg = 0
-			for i in range(10**3):
-				# simulate the observed round
-				counter = random.randint(0, 200)
-				p = Prover(counter_v=counter)
-				p.compute_key(lk=lk, isAttacker=False)
-				prev_c, prev_n = p.send_welcome(lc=lc)
-				result, prev_r = p.compute_u3()
-				
-				# simulate current round
-				for i in range(0, 24):
-					p.verifier.get_challenge(lc)
-				start = time.time()
-				c, n = p.send_welcome(lc=lc)
-				r = p.attack_observed_round(prev_c, prev_r, c, lc)
-				result, true_r = p.verifier.verify_u3(r)
-				end = time.time()
-				avg = avg + (end-start)
-			avg_time.append(avg/10**3)
-		plt.plot(lk_values, avg_time)
-	plt.xlabel('key length')
-	plt.ylabel('average elapsed time')
-	plt.legend(lc_values)
-	plt.show()
+                c, n = p.send_welcome(lc=lc)
+                r = p.attack_observed_round(prev_c, prev_r, c, lc)
+                result, true_r = p.verifier.verify_u3(r)
+                if (result):
+                    success += 1
+            success_rate.append(success/repetitions)
+            end = time.time()
+            avg = (end-start)/repetitions
+            avg_time.append(avg)
+        plt.plot(lk_values, success_rate)
+        avg_holder.append(avg_time)
+    plt.title('Attack success rate')
+    plt.legend([ f"lc = {x}" for x in lc_values])
+    plt.xlabel('key length')
+    plt.ylabel('success rate')
+    plt.show(block = False)
 
+    fig = plt.figure()
+    for avg in avg_holder:
+        plt.plot(lk_values, avg)
+    plt.title('Attack complexity')
+    plt.legend([ f"lc = {x}" for x in lc_values])
+    plt.xlabel('key length')
+    plt.ylabel('average elapsed time')
+    plt.show(block = False)
+	
 if __name__ == "__main__": 
-    alg_complexity()
+    #alg_complexity()
+    attack_as_observer()
     plt.show()
