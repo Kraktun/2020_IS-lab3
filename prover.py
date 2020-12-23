@@ -1,6 +1,7 @@
 import numpy as np
 from verifier import *
 from utils import *
+import random
 
 class Prover:
 
@@ -40,7 +41,21 @@ class Prover:
         return r
 
 def build_stat_response(lk, c, n):
-    # replace with non-brute approach
+    # non-random approach
+    highest_key_val = 2**lk - 1
+    digit_num=0
+    while(highest_key_val>0):
+        digit_num=digit_num+1
+        highest_key_val=highest_key_val//10
+    highest_digit_sum =  10 * digit_num
+    sum_digit_key = random.randint(0, highest_digit_sum)
+    c_dec = bin_to_int(c)
+    sc = sum_digits(c_dec)
+    st = sum_digits(n) + sum_digit_key
+    s = sc*st
+    r = int_to_bin(s)
+
+    # random approach
     key = np.random.choice(2, lk, p=[0.5, 0.5])
     r = build_response(key, c, n)
     return r

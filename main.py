@@ -126,6 +126,6 @@ def attack_brute():
 	
 if __name__ == "__main__": 
     alg_complexity()
-    #attack_as_observer()
-    #attack_brute()
+    attack_as_observer()
+    attack_brute()
     plt.show()
