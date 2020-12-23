@@ -17,13 +17,14 @@ def alg_complexity():
             p = Prover(counter_v=0)
             p.compute_key(lk=lk, isAttacker=False)
             repetitions = 10**3
-            start = time.time()
+            avg = 0
             for i in range(repetitions):
+                start = time.time()
                 c, n = p.send_welcome(lc=lc) # generate challenge and n
                 p.compute_u3() # compute r, r1 from c and n and verify that r = r1
-            end = time.time()
-            avg = (end-start)/repetitions
-            avg_time.append(avg)
+                end = time.time()
+                avg += (end-start)
+            avg_time.append(avg/repetitions)
         plt.plot(lc_values, avg_time)
     plt.legend([ f"lc = {x}" for x in lc_values])
     plt.title('Algorithm complexity')
@@ -41,7 +42,7 @@ def attack_as_observer():
         for lk in lk_values:
             success = 0
             repetitions = 10**3
-            start = time.time()
+            avg = 0
             for i in range(repetitions):
                 # simulate the observed round
                 counter = random.randint(0, 200)
@@ -51,18 +52,19 @@ def attack_as_observer():
                 result, prev_r = p.compute_u3()
 				
                 # simulate current round
-                for i in range(0, 24):
+                for j in range(0, 24):
                     c, n = p.verifier.get_challenge(lc)
-					
+				
+                start = time.time()
                 c, n = p.send_welcome(lc=lc)
                 r = p.attack_observed_round(prev_c, prev_r, c, lc)
                 result, true_r = p.verifier.verify_u3(r)
+                end = time.time()
                 if (result):
                     success += 1
+                avg += (end-start)
             success_rate.append(success/repetitions)
-            end = time.time()
-            avg = (end-start)/repetitions
-            avg_time.append(avg)
+            avg_time.append(avg/repetitions)
         plt.plot(lk_values, success_rate)
         avg_holder.append(avg_time)
     plt.title('Attack success rate (observer)')
@@ -90,20 +92,21 @@ def attack_brute():
         for lk in lk_values:
             success = 0
             repetitions = 10**3
-            start = time.time()
+            avg = 0
             for i in range(repetitions):
                 # simulate a random round
                 counter = random.randint(0, 200)
+                start = time.time()
                 p = Prover(counter_v=counter)
                 p.compute_key(lk=lk, isAttacker=True)
                 c, n = p.send_welcome(lc=lc) # generate challenge and n
                 result = p.compute_u3()
+                end = time.time()
                 if (result[0][0]):
                     success += 1
+                avg += (end - start)
             success_rate.append(success/repetitions)
-            end = time.time()
-            avg = (end-start)/repetitions
-            avg_time.append(avg)
+            avg_time.append(avg/repetitions)
         plt.plot(lk_values, success_rate)
         avg_holder.append(avg_time)
     plt.title('Attack success rate (brute)')
@@ -122,7 +125,7 @@ def attack_brute():
     plt.show(block = False)
 	
 if __name__ == "__main__": 
-    #alg_complexity()
+    alg_complexity()
     #attack_as_observer()
-    attack_brute()
+    #attack_brute()
     plt.show()
